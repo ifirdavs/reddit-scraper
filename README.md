@@ -2,6 +2,7 @@
 
 <https://brightdata.com/blog/web-data/how-to-scrape-reddit-python> – Selenium
 <https://realpython.com/beautiful-soup-web-scraper-python/> – Beautiful Soup
+<https://scott-dallman.medium.com/web-scraping-dynamic-content-only-using-beautiful-soup-631496473c0e> – Scraping Dynamic Content with Beautiful Soup
 
 To access Reddit with valid headers using Beautiful Soup, you need to pass a `User-Agent` in your headers. Reddit requires this to process your request. Here's how you can do it:
 
