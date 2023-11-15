@@ -3,16 +3,29 @@ from bs4 import BeautifulSoup
 import logging
 import datetime
 import uuid
+import argparse
 
 logging.basicConfig(filename='reddit.log', level=logging.INFO)
 
+parser = argparse.ArgumentParser(description='Scrape Reddit')
+
+parser.add_argument('--posts', type=int, default=100, help='Number of posts')
+parser.add_argument('--category', type=str, default="top", help='Category')
+parser.add_argument('--period', type=str, default="month", help='Period')
+
+args = parser.parse_args()
+
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'}
 
-distances = [4,33,62,91]
+def distances():
+    for i in range(4, 2905, 29):
+        yield i
+
 counter = 0
 
-for d in distances:
-    url = f'https://www.reddit.com/svc/shreddit/feeds/popular-feed?after=dDNfMTdqdmc1Mw%3D%3D&distance={d}&sort=TOP&t=MONTH'
+break_flag = False
+for d in distances():
+    url = f'https://www.reddit.com/svc/shreddit/feeds/popular-feed?after=dDNfMTdqdmc1Mw%3D%3D&distance={d}&sort={args.category}&t={args.period}'
     soup = BeautifulSoup(requests.get(url).content, 'html.parser')
     posts = soup.find_all('shreddit-post')
     for post in posts:
@@ -39,12 +52,13 @@ for d in distances:
             logging.info('Post {} successfully scraped'.format(counter))
 
         except Exception as e:
-            counter += 1
             logging.error(f'{datetime.datetime.now()} Error scraping post {user_page_url}: {e}')
         
-        if counter == 100:
+        if counter == args.posts:
+            break_flag = True
             break
-
+    if break_flag:
+        break
 
 file_name = 'reddit-{}.txt'.format(datetime.datetime.now().strftime('%Y%m%d%H%M'))
 
